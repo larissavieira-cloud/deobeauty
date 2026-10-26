@@ -865,13 +865,43 @@ img,video,svg{max-width:100%}
 
 </head>
 <body>
-<div id="gate" style="position:fixed;inset:0;z-index:2147483647;background:#FBF7F2;display:flex;align-items:center;justify-content:center;font-family:Poppins,system-ui,sans-serif">
-<form id="gateF" style="width:min(360px,90vw);display:flex;flex-direction:column;gap:14px;text-align:center">
-<div style="font-size:28px;letter-spacing:.02em;color:#2A211C">DEO <span style="font-weight:300">BEAUTY</span></div>
-<p style="margin:0;color:#6B5F57;font-size:14px">Prévia para aprovação. Digite a senha para entrar.</p>
-<input id="gateP" type="password" autocomplete="current-password" placeholder="Senha" style="padding:14px 18px;border-radius:999px;border:1px solid #d9cfc6;font-size:15px;outline:none">
-<button style="padding:14px;border-radius:999px;border:0;background:#7A5A43;color:#fff;font-size:15px;font-weight:600;cursor:pointer">Entrar</button>
-<small id="gateE" style="color:#b0413e;min-height:16px"></small></form></div>
+<div id="gate"><style>
+#gate{position:fixed;inset:0;z-index:2147483647;background:#FBF7F2;display:grid;grid-template-columns:1.08fr 1fr;font-family:Poppins,system-ui,sans-serif;color:#2A211C;overflow:auto}
+#gate .g-ph{position:relative;margin:16px;border-radius:28px;overflow:hidden;background:#EADBCB;min-height:300px}
+#gate .g-ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:55% 38%;animation:gZoom 14s ease-out both}
+@keyframes gZoom{from{transform:scale(1.06)}to{transform:scale(1)}}
+#gate .g-ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(42,33,28,0) 60%,rgba(42,33,28,.28))}
+#gate .g-cap{position:absolute;left:22px;bottom:22px;z-index:1;color:#fff;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+#gate .g-cap b{display:block;font-size:22px;letter-spacing:0;text-transform:none;font-weight:500;margin-top:4px}
+#gate .g-cap i{font-weight:300}
+#gate .g-panel{display:flex;align-items:center;justify-content:center;padding:40px 32px}
+#gate form{width:min(380px,100%);display:flex;flex-direction:column;gap:14px}
+#gate .g-logo{display:block;height:46px;color:#2A211C;margin-bottom:14px}
+#gate .g-logo svg{height:100%;width:auto;fill:currentColor}
+#gate .g-eb{display:inline-flex;align-items:center;gap:10px;font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:#7A5A43;font-weight:500}
+#gate .g-eb::before{content:"";width:22px;height:1px;background:currentColor;opacity:.6}
+#gate h1{font-size:36px;line-height:1.06;font-weight:500;margin:0;letter-spacing:-.01em}
+#gate h1 em{font-weight:300}
+#gate p{margin:0 0 6px;color:#6B5F57;font-size:14px;line-height:1.5}
+#gate input{padding:15px 20px;border-radius:999px;border:1px solid #d9cfc6;background:#fff;font:inherit;font-size:16px;outline:none;color:#2A211C}
+#gate input:focus{border-color:#7A5A43;box-shadow:0 0 0 3px rgba(122,90,67,.15)}
+#gate button{padding:15px;border-radius:999px;border:0;background:#7A5A43;color:#fff;font:inherit;font-size:15px;font-weight:600;cursor:pointer;transition:background .2s}
+#gate button:hover{background:#5f4433}
+#gate small{color:#b0413e;min-height:16px;font-size:12.5px}
+#gate .g-foot{margin-top:18px;display:flex;gap:16px;flex-wrap:wrap;font-size:11.5px;color:#8a7d73}
+@media(max-width:760px){#gate{grid-template-columns:1fr;grid-template-rows:auto auto;align-content:start}#gate .g-ph{margin:10px 10px 0;border-radius:22px;height:46vh;min-height:280px}#gate .g-ph img{object-position:60% 30%}#gate .g-panel{padding:26px 22px 36px;align-items:flex-start}#gate .g-logo{height:38px;margin-bottom:6px}#gate h1{font-size:28px}}
+</style>
+<div class="g-ph"><img src="img/gate.webp" alt="Mulher sentindo o perfume Sweet Petals"><span class="g-cap">Novo · Kit Sweet Petals<b>Floral, frutado e <i>feito em camadas.</i></b></span></div>
+<div class="g-panel"><form id="gateF" autocomplete="on">
+<span class="g-logo" aria-label="Deo Beauty"><svg viewBox="0 0 1079 547" aria-hidden="true"><use href="#logo"/></svg></span>
+<span class="g-eb">Nova loja · prévia</span>
+<h1>Bem-vinda à nova <em>DeoBeauty.</em></h1>
+<p>Este é o novo site em fase de aprovação. Digite a senha para entrar.</p>
+<input id="gateP" type="password" autocomplete="current-password" placeholder="Senha" aria-label="Senha">
+<button type="submit">Entrar</button>
+<small id="gateE"></small>
+<div class="g-foot"><span>✦ Perfumes, kits e body splash</span><span>✦ 7 lojas físicas</span></div>
+</form></div></div>
 <script>(function(){var H="6d5f9c3fccf5acd63375bd7ea53e67f41690cc502bfabaf03acb89d9dbf53ecf",g=document.getElementById('gate');try{if(sessionStorage.getItem('deo_ok')===H){g.remove();return;}}catch(e){}
 document.getElementById('gateF').addEventListener('submit',async function(e){e.preventDefault();var v=document.getElementById('gateP').value;var b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v));var x=[...new Uint8Array(b)].map(function(n){return n.toString(16).padStart(2,'0')}).join('');if(x===H){try{sessionStorage.setItem('deo_ok',H)}catch(e){}g.remove();}else{document.getElementById('gateE').textContent='Senha incorreta';}});})();</script>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
