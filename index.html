@@ -818,13 +818,22 @@ h1,h2,h3,h4{margin:0;font-weight:500;letter-spacing:-.025em;text-wrap:balance;li
 @media(max-width:640px){.hero .arrows{left:10px;right:10px!important;top:62%;bottom:auto!important;justify-content:space-between;pointer-events:none}.hero .arrows .circle-btn{pointer-events:auto;box-shadow:0 2px 10px rgba(0,0,0,.12)}}
 /* v17 — ajuste fino para todos os celulares */
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
-html,body{max-width:100%;overflow-x:hidden}
+html,body{max-width:100%;overflow-x:clip}
 img,video,svg{max-width:100%}
 @media(max-width:640px){input,select,textarea{font-size:16px!important}}
 .drawer:not(.on){visibility:hidden}
 .drawer.on{visibility:visible}
 .drawer{transition:transform .38s cubic-bezier(.2,.7,.2,1),visibility 0s linear .38s}
 .drawer.on{transition:transform .38s cubic-bezier(.2,.7,.2,1),visibility 0s}
+
+/* v18 — galeria acompanha a rolagem e descrição recolhida */
+.pdp > :first-child{position:sticky;top:110px;align-self:start}
+.gal{position:static}
+.desc-more{position:relative;max-height:9.5em;overflow:hidden}
+.desc-more::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3.5em;background:linear-gradient(rgba(251,247,242,0),var(--paper))}
+.desc-more.open{max-height:none}.desc-more.open::after{display:none}
+.desc-tg{background:none;border:0;padding:6px 0 0;font:inherit;font-size:13.5px;font-weight:500;color:var(--ink);text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+@media(max-width:900px){.pdp > :first-child{position:static}}
 
 </style>
 
@@ -1599,7 +1608,7 @@ function product(h) {
         <div class="perk">${icon('i-swap')}<span><b>Troca fácil</b> · reputação RA1000 no Reclame Aqui</span></div>
       </div>
       <div class="acc">
-        <details open><summary>Descrição${icon('i-plus')}</summary><div class="ac-b">${desc.map(x => `<p>${esc(x)}</p>`).join('')}</div></details>
+        <details open><summary>Descrição${icon('i-plus')}</summary><div class="ac-b">${desc.join(' ').length > 420 ? `<div class="desc-more" id="descMore">${desc.map(x => `<p>${esc(x)}</p>`).join('')}</div><button class="desc-tg" id="descTg" type="button">Ler descrição completa</button>` : desc.map(x => `<p>${esc(x)}</p>`).join('')}</div></details>
         ${l ? `<details><summary>Notas olfativas${icon('i-plus')}</summary><div class="ac-b"><p><b style="color:var(--ink);font-weight:500">Saída:</b> ${esc(l.top.join(', '))}</p><p><b style="color:var(--ink);font-weight:500">Coração:</b> ${esc(l.heart.join(', '))}</p><p><b style="color:var(--ink);font-weight:500">Fundo:</b> ${esc(l.base.join(', '))}</p></div></details>` : ''}
         <details><summary>Como usar${icon('i-plus')}</summary><div class="ac-b"><p>${esc(howTo ? howTo.replace(/^recomenda[cç][aã]o de uso:\s*/i, '') : 'Aplique conforme a necessidade. Para perfumação mais duradoura, combine hidratante, body splash e perfume da mesma fragrância.')}</p></div></details>
         <details><summary>Trocas e devoluções${icon('i-plus')}</summary><div class="ac-b"><p>${policyT}</p></div></details>
@@ -1638,6 +1647,7 @@ function product(h) {
   const wire = () => {
     const main = $('#galMain'); const cntEl = $('#galCnt');
     $$('.gal .thumbs button').forEach(b => b.addEventListener('click', () => { const g = gal[+b.dataset.gi]; main.src = g.src; main.className = g.ct ? '' : 'cover'; $$('.gal .thumbs button').forEach(x => x.classList.toggle('on', x === b)); cntEl.textContent = (+b.dataset.gi + 1) + ' / ' + gal.length; }));
+    const dt = $('#descTg'); if (dt) dt.addEventListener('click', () => { const o = $('#descMore').classList.toggle('open'); dt.textContent = o ? 'Mostrar menos' : 'Ler descrição completa'; });
     let q = 1; const qEl = $('#pQty span'); const add = $('#pAdd');
     $('#pQty').addEventListener('click', e => { const b = e.target.closest('[data-d]'); if (!b) return; q = Math.max(1, Math.min(9, q + +b.dataset.d)); qEl.textContent = q; add.dataset.q = q; });
     const vc = $('#varChips'); if (vc) { const pick = (b, keep) => { const i = +b.dataset.vi; if (keep) { $$('#varChips .sw').forEach(x => { x.classList.toggle('on', x === b); x.setAttribute('aria-checked', x === b); }); add.dataset.v = i; } $('#swName').textContent = p.variants[i].t; if (p.vimgs && p.vimgs[i]) { main.classList.add('swap'); setTimeout(() => { main.src = p.vimgs[i]; main.className = ''; main.onload = () => main.classList.remove('swap'); }, 160); $$('.gal .thumbs button').forEach(x => x.classList.toggle('on', +x.dataset.gi === i)); cntEl.textContent = (i + 1) + ' / ' + gal.length; } };
